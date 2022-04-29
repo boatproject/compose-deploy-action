@@ -1,0 +1,30 @@
+name: Compose Deploy
+description: Deploy to server using ssh and docker compose
+inputs: 
+  host:
+    description: SSH host being deployed to
+    required: true
+  path:
+    description: Path on host where compose project is
+    required: true
+    default: /
+  username:
+    description: ssh user on host
+    required: true
+  ssh_key:
+    description: ssh key 
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Deploy to server
+      uses: appleboy/ssh-action@master
+      with:
+        username: ${{ inputs.username }}
+        host: ${{ inputs.host }}
+        key: ${{ inputs.ssh_key }}
+        script: |
+          cd ${{ input.path }}
+          docker compose pull
+          docker compose up -d
